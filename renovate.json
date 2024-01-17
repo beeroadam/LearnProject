@@ -16,9 +16,6 @@
             "groupName": "all minor updates"
         },
         {
-            "updateTypes": [
-                "major"
-            ],
             "separateMultipleMajor": true
         }
     ]
