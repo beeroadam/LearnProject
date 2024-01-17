@@ -18,7 +18,7 @@
         <spring.version>6.1.0</spring.version>
         <kotlin.version>1.9.22</kotlin.version>
         <junit.version>5.10.0</junit.version>
-        <jakarta.servlet.version>5.0.0</jakarta.servlet.version>
+        <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
         <jstl.version>1.2</jstl.version>
         <jakarta.annotation.version>2.0.0</jakarta.annotation.version>
         <jackson.version>2.14.0-rc1</jackson.version>
