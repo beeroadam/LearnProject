@@ -11,13 +11,24 @@
     "packageRules": [
         {
             "updateTypes": [
-                "minor"
+                "major"
             ],
-            "groupName": "all minor updates"
+            "groupName": "all major updates",
+            "groupSlug": "major-updates"
         },
         {
-            "matchPackagePatterns": ["*"],
-            "separateMultipleMajor": true
+            "updateTypes": [
+                "minor"
+            ],
+            "groupName": "all minor updates",
+            "groupSlug": "minor-updates"
+        },
+        {
+            "updateTypes": [
+                "patch"
+            ],
+            "groupName": "all patch updates",
+            "groupSlug": "patch-updates"
         }
     ]
 }
