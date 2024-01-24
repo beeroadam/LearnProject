@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2024-01-24
+### Added
+- Introduces Spring Data JPA to the application. This allows the application to persist data to a database.
+- Changed the application to use an H2 database instead of an in-memory database. This allows the application to persist data between restarts.
+
 ## [0.1.1] - 2024-01-18
 ### Added
 - Added Renovate Maven build Git workflow. This workflow will automatically create pull requests to update dependencies in `pom.xml` when new versions are available.
