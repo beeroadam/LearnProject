@@ -11,12 +11,12 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(NoSuchElementException::class)
     fun handleProductNotFoundError(e: NoSuchElementException): ResponseEntity<String> {
-        return ResponseEntity("Product not found", HttpStatus.NOT_FOUND)
+        return ResponseEntity("Element not found", HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(NoHandlerFoundException::class)
     fun handleNotFoundError(e: NoHandlerFoundException): ResponseEntity<String> {
-        return ResponseEntity("Page not found", HttpStatus.NOT_FOUND)
+        return ResponseEntity("Invalid endpoint", HttpStatus.NOT_FOUND)
     }
 
     @ExceptionHandler(Exception::class)

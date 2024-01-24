@@ -61,6 +61,32 @@
             <version>${spring.version}</version>
         </dependency>
 
+        <!-- Database -->
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>3.2.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.2.224</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.4.1.Final</version>
+        </dependency>
+
         <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -95,6 +121,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-kotlin</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <!-- To handle LocalDateTime -->
@@ -149,9 +180,18 @@
                     <jvmTarget>11</jvmTarget>
                     <compilerPlugins>
                         <plugin>spring</plugin>
+                        <plugin>jpa</plugin>
                     </compilerPlugins>
                 </configuration>
                 <dependencies>
+                    <!--To use JPA, the entity classes need a constructor without parameters.
+                        By default, the Kotlin classes don’t have it, and to generate them we’ll need to use the jpa-plugin
+                        -->
+                    <dependency>
+                            <groupId>org.jetbrains.kotlin</groupId>
+                            <artifactId>kotlin-maven-noarg</artifactId>
+                            <version>${kotlin.version}</version>
+                        </dependency>
                     <dependency>
                         <groupId>org.jetbrains.kotlin</groupId>
                         <artifactId>kotlin-maven-allopen</artifactId>
@@ -204,7 +244,10 @@
                     <excludes>
                         <exclude>com/beeroadam/configuration/*</exclude>
                         <exclude>com/beeroadam/exception/*</exclude>
-                        <exclude>com/beeroadam/model/*</exclude>
+                        <exclude>com/beeroadam/entity/*</exclude>
+                        <exclude>com/beeroadam/dto/*</exclude>
+                        <exclude>com/beeroadam/repository/*</exclude>
+                        <exclude>com/beeroadam/utils/*</exclude>
                         <exclude>com/beeroadam/WebInitializer*.*</exclude>
                     </excludes>
                 </configuration>

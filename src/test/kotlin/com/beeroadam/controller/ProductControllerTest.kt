@@ -1,9 +1,8 @@
 package com.beeroadam.controller
 
-import com.beeroadam.model.Price
-import com.beeroadam.model.Product
-import com.beeroadam.model.ProductCategory
+import com.beeroadam.dto.ProductDTO
 import com.beeroadam.service.ProductService
+import com.beeroadam.utils.MetricsHelperService
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,44 +12,23 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import java.time.LocalDateTime
 
 class ProductControllerTest {
 
     private val productService = mockk<ProductService>()
-    private val collectorRegistry = mockk<CollectorRegistry>(relaxed = true) // relaxed = true to avoid mocking all methods
-    private val productController = ProductController(productService, collectorRegistry)
+    private val metricsHelperService = mockk<MetricsHelperService>(relaxed = true) // relaxed = true to avoid mocking all methods
+    private val productController = ProductController(productService, metricsHelperService)
+
 
     @Test
     fun `getProducts returns all products`() {
         val expectedProducts = listOf(
-            Product(
-                1,
-                "Product 1",
-                "Description 1",
-                Price(10.0, null),
-                ProductCategory.BOOKS,
-                null,
-                10,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-            ), Product(
-                2,
-                "Product 2",
-                "Description 2",
-                Price(20.0, null),
-                ProductCategory.ELECTRONICS,
-                null,
-                20,
-                true,
-                LocalDateTime.now(),
-                LocalDateTime.now()
-            )
+            ProductDTO(1, "Product 1", "BOOKS", mutableListOf()),
+            ProductDTO(2, "Product 2", "ELECTRONICS", mutableListOf())
         )
         every { productService.getProducts() } returns expectedProducts
 
-        val responseEntity: ResponseEntity<List<Product>> = productController.getProducts()
+        val responseEntity: ResponseEntity<List<ProductDTO>> = productController.getProducts()
 
         assertEquals(HttpStatus.OK, responseEntity.statusCode)
         assertEquals(expectedProducts, responseEntity.body)
@@ -58,21 +36,10 @@ class ProductControllerTest {
 
     @Test
     fun `getProduct returns the correct product`() {
-        val expectedProduct = Product(
-            1,
-            "Product 1",
-            "Description 1",
-            Price(10.0, null),
-            ProductCategory.BOOKS,
-            null,
-            10,
-            true,
-            LocalDateTime.now(),
-            LocalDateTime.now()
-        )
+        val expectedProduct = ProductDTO(1, "Product 1", "BOOKS", mutableListOf())
         every { productService.getProduct(1) } returns expectedProduct
 
-        val responseEntity: ResponseEntity<Product> = productController.getProduct(1)
+        val responseEntity: ResponseEntity<ProductDTO> = productController.getProduct(1)
 
         assertEquals(HttpStatus.OK, responseEntity.statusCode)
         assertEquals(expectedProduct, responseEntity.body)
@@ -80,11 +47,11 @@ class ProductControllerTest {
 
     @Test
     fun `getProduct throws exception when product not found`() {
-        val id = 1
+        val id = 1L
         every { productService.getProduct(id) } throws NoSuchElementException()
 
         assertThrows<NoSuchElementException> {
-            productService.getProduct(id)
+            productController.getProduct(id)
         }
 
         verify { productService.getProduct(id) }
@@ -95,9 +62,77 @@ class ProductControllerTest {
         every { productService.getProducts() } throws Exception()
 
         assertThrows<Exception> {
-            productService.getProducts()
+            productController.getProducts()
         }
 
         verify { productService.getProducts() }
+    }
+
+    @Test
+    fun `createProduct creates a new product`() {
+        val productDTO = ProductDTO(1, "Product 1", "BOOKS", mutableListOf())
+        every { productService.createProduct(productDTO) } returns productDTO
+
+        val responseEntity: ResponseEntity<ProductDTO> = productController.createProduct(productDTO)
+
+        assertEquals(HttpStatus.CREATED, responseEntity.statusCode)
+        assertEquals(productDTO, responseEntity.body)
+    }
+
+    @Test
+    fun `createProduct throws exception when product cannot be created`() {
+        val productDTO = ProductDTO(1, "Product 1", "BOOKS", mutableListOf())
+        every { productService.createProduct(productDTO) } throws Exception()
+
+        assertThrows<Exception> {
+            productController.createProduct(productDTO)
+        }
+
+        verify { productService.createProduct(productDTO) }
+    }
+
+    @Test
+    fun `deleteProduct deletes a product`() {
+        val id = 1L
+        every { productService.deleteProduct(id) } returns Unit
+
+        val responseEntity: ResponseEntity<Unit> = productController.deleteProduct(id)
+
+        assertEquals(HttpStatus.NO_CONTENT, responseEntity.statusCode)
+    }
+
+    @Test
+    fun `deleteProduct throws exception when product cannot be deleted`() {
+        val id = 1L
+        every { productService.deleteProduct(id) } throws Exception()
+
+        assertThrows<Exception> {
+            productController.deleteProduct(id)
+        }
+
+        verify { productService.deleteProduct(id) }
+    }
+
+    @Test
+    fun `updateProduct updates a product`() {
+        val productDTO = ProductDTO(1, "Product 1", "BOOKS", mutableListOf())
+        every { productService.updateProduct(1, productDTO) } returns productDTO
+
+        val responseEntity: ResponseEntity<ProductDTO> = productController.updateProduct(1, productDTO)
+
+        assertEquals(HttpStatus.OK, responseEntity.statusCode)
+        assertEquals(productDTO, responseEntity.body)
+    }
+
+    @Test
+    fun `updateProduct throws exception when product cannot be updated`() {
+        val productDTO = ProductDTO(1, "Product 1", "BOOKS", mutableListOf())
+        every { productService.updateProduct(1, productDTO) } throws Exception()
+
+        assertThrows<Exception> {
+            productController.updateProduct(1, productDTO)
+        }
+
+        verify { productService.updateProduct(1, productDTO) }
     }
 }
